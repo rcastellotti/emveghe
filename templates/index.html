@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="refresh" content="60" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+  </head>
+  <script>
+    var elem = document.documentElement;
+    function toggleFullScreen() {
+      if (!window.screenTop && !window.screenY) {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      *::-webkit-scrollbar {
+        display: none;
+      }
+
+      * {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    }
+  </style>
+  <body
+    ondblclick="toggleFullScreen();"
+    class="bg-black text-orange-400 sm:text-3xl xl:text-6xl p-2"
+  >
+    <div
+      class="top-0 z-10 bg-black sticky underline mb-4 flex items-center justify-between"
+    >
+      {{ stationName }} - departures <small>{{ date }}</small>
+    </div>
+    {% for departure in station %} {% if departure.departureTimeMinutes>0 %}
+    <div class="grid grid-cols-12 place-items-center gap-x-2">
+      <div class="col-span-1 flex flex-col text-left">
+        {% if departure.lineBackgroundColor[0]=="#000000" %}
+        <div class="underline text-white">{{ departure.label }}</div>
+        <span class="text-[8px] sm:text-base text-white">
+          {{departure.product}}
+        </span>
+        {% else %}
+        <div class="underline text-[{{ departure.lineBackgroundColor[0] }}]">
+          {{ departure.label }}
+        </div>
+        <span
+          class="text-[8px] sm:text-base text-[{{ departure.lineBackgroundColor[0]}}]"
+        >
+          {{departure.product}}
+        </span>
+        {% endif %}
+      </div>
+      <div class="col-span-9 slideshow flex w-full">
+        {% if departure.destination|length > 20 %}
+        <div class="move whitespace-nowrap w-full">
+          <div>{{ departure.destination }}</div>
+        </div>
+        {% else %}
+        <div class="whitespace-nowrap w-full">
+          <div>{{ departure.destination }}</div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-span-2 text-right whitespace-nowrap">
+        {{ departure.departureTimeMinutes }} min
+      </div>
+    </div>
+    {% endif %} {% endfor %}
+    <div class="carta">
+        vero G, no blabla
+    </div>
+  </body>
+</html>
+
+<style>
+  body {
+    font-family: "Electronic Highway sign" !important;
+  }
+  @font-face {
+    font-family: "Electronic Highway Sign";
+    src: url("/static/EHSMB.TTF");
+  }
+  .carta {
+    font-family: "blzee" !important;
+  }
+  @font-face {
+    font-family: "blzee";
+    src: url("/static/blzee.ttf");
+  }
+
+  .slideshow {
+    margin: 0 auto;
+    transform: translate3d(0, 0, 0);
+    overflow: hidden;
+  }
+
+  .move {
+    height: 100%;
+    transform: translate3d(0, 0, 0);
+    display: flex;
+    animation: moveSlideshow 6s linear infinite;
+  }
+
+  .slideshow:hover .move {
+    animation-play-state: paused;
+  }
+  .divve:active {
+    animation-play-state: running;
+  }
+
+  @keyframes moveSlideshow {
+    0% {
+      transform: translateX(0%);
+    }
+    30% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+</style>
+<!-- https://www.mvg.de/api/fahrinfo/location/nearby?latitude=48.1562732&longitude=11.5389234 -->
+<!-- una pagina per cercare le fermate -->
+<!-- pagina della fermata con tanto di  nome -->
+<!-- bottoni con i preferiti sotto
+ -->
