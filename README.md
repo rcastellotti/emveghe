@@ -1,8 +1,4 @@
 
-# init db
+# emveghe
 
-```
-docker exec -it signs-rcastellotti-dev-backend python3 -c "from app import db; db.create_all()"
-```
-
-The project is now archived, but eventually I learned something new in the process :))
+source code for [mvg.fly.dev](https://mvg.fly.dev),a simple website to consult mvg timetable using [mvg=api](https://pypi.org/project/mvg-api/)

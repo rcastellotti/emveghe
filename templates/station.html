@@ -1,0 +1,109 @@
+{% extends 'base.html' %} {% block content %}
+<script>
+  var elem = document.documentElement;
+  function toggleFullScreen() {
+    if (!window.screenTop && !window.screenY) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  }
+  function addToFavorites(el) {
+    console.log(el);
+    const favorites = localStorage.getItem("favorites");
+    var array = JSON.parse(favorites);
+    if (array == null) {
+      localStorage.setItem("favorites", `["${el}"]`);
+    } else {
+      console.log(array);
+      localStorage.setItem("favorites", `["${array}", "${el}"]`);
+    }
+  }
+</script>
+<div class="mt-12 grid grid-cols-12 items-center overflow-auto">
+  <div
+    ondblclick="toggleFullScreen();"
+    class="col-span-12 top-0 z-20 bg-black sticky mb-4 flex items-center justify-between"
+  >
+    <h1 class="underline font-bold">{{ request.args.get('name') }}</h1>
+    <small class="underline">{{ date }}</small>
+    <button
+      onclick="addToFavorites('{{id}}')"
+      type="button"
+      class="bg-red-400 text-black px-2 underline-none"
+      type="submit"
+    >
+      <img class="h-6" src="/static/fav.png" alt="" />
+    </button>
+  </div>
+  {% for departure in station %} {% if departure.departureTimeMinutes>0 %}
+  <div class="z-10 bg-black col-span-2">
+    <div
+      class="underline tetx-left text-[{{ departure.lineBackgroundColor[0] }}]"
+    >
+      {{ departure.label }}
+    </div>
+    <div
+      class="text-[8px] text-left sm:text-base text-[{{ departure.lineBackgroundColor[0] }}]"
+    >
+      {{ departure.product }}
+    </div>
+  </div>
+  <div class="a col-span-8 whitespace-nowrap">{{ departure.destination }}</div>
+  <div class="bg-black z-10 col-span-2 text-right whitespace-nowrap">
+    {{ departure.departureTimeMinutes }} min
+  </div>
+  {% endif %} {% endfor %}
+</div>
+<script>
+  function isOverflown(element) {
+    return (
+      element.scrollHeight > element.clientHeight ||
+      element.scrollWidth > element.clientWidth
+    );
+  }
+
+  var els = document.getElementsByClassName("a");
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    if (isOverflown(el)) {
+      el.classList.add("move");
+      console.log(
+        "Element #" +
+          i +
+          " is " +
+          (isOverflown(el) ? "" : "not ") +
+          "overflown."
+      );
+    }
+  }
+</script>
+<style>
+  .move {
+    animation: moveSlideshow 6s linear infinite;
+  }
+
+  @keyframes moveSlideshow {
+    0% {
+      transform: translateX(0%);
+    }
+    30% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+</style>
+{% endblock %}

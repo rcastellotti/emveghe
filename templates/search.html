@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% block content %}
+<ul class="mt-12" id="results">
+  {% for r in results %} {% if r.id and r.name %}
+  <li>
+    <a class="underline" href="/{{ r.id }}?name={{ r.name }}"
+      >{{ r.id }} - {{ r.name }}</a
+    >
+  </li>
+  {% endif %} {% endfor %}
+</ul>
+
+{% endblock %}

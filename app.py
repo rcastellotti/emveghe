@@ -1,30 +1,48 @@
 from flask import Flask, request, render_template
-from flask_sqlalchemy import SQLAlchemy
-from nanoid import generate
-from flask_cors import CORS
-import os
 from mvg_api import *
 from datetime import datetime
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
+
 
 @app.get("/")
 def index():
-    stationName = "hauptbahnof"
-    date=datetime.now().strftime("%d/%m %H:%M:%S")
-    station = get_departures(station_id="de:09162:9")
+    date = datetime.now().strftime("%d/%m %H:%M:%S")
+    station = []
     for departure in station:
         departure["destination"] = (
             departure["destination"].replace("ß", "ss").replace("ü", "UE").upper()
         )
         departure["lineBackgroundColor"] = departure["lineBackgroundColor"].split(",")
 
-    return render_template("index.html", stationName=stationName,date=date, station=station)
+    return render_template("index.html", date=date, station=station)
+
+
+@app.get("/<path:path>")
+def station(path):
+    date = datetime.now().strftime("%d/%m %H:%M:%S")
+
+    station = get_departures(station_id=path)
+    for departure in station:
+        departure["destination"] = (
+            departure["destination"].replace("ß", "ss").replace("ü", "UE").upper()
+        )
+        departure["lineBackgroundColor"] = departure["lineBackgroundColor"].split(",")
+        if departure["lineBackgroundColor"][0] == "#000000":
+            departure["lineBackgroundColor"][0] = "#ffffff"
+
+    return render_template("station.html", station=station, date=date, id=path)
+
+
+@app.get("/search")
+def search():
+    input = request.args.get("q")
+    if input:
+        results = get_locations(input)
+    else:
+        results = []
+    return render_template("search.html", results=results)
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-
-# https://www.mvg.de/api/fahrinfo/departure/de:09162:104
